@@ -4,11 +4,28 @@
       <nav class="flex text-zinc-200 gap-4 items-center">
         <a class="no-underline hover:underline" href="">О нас</a>
         <a class="no-underline hover:underline">Категории</a>
-        <button @click="modalActive = true" class="transition duration-150 bg-red-500 px-5 py-1 border-2 border-red-500 rounded-md text-red-50 font-semibold hover:bg-red-600" href="">Войти</button>
-        <button class="transition duration-150 px-5 py-1 text-red-500 rounded-md border-2 border-red-500 font-semibold hover:bg-red-600 hover:text-red-50" href="">Зарегестрироваться</button>
+        <button @click="modalLogActive = true" class="transition duration-150 bg-red-500 px-5 py-1 border-2 border-red-500 rounded-md text-red-50 font-semibold hover:bg-red-600" href="">Войти</button>
+        <button @click="modalRegActive = true" class="transition duration-150 px-5 py-1 text-red-500 rounded-md border-2 border-red-500 font-semibold hover:bg-red-600 hover:text-red-50" href="">Зарегестрироваться</button>
       </nav>
     </header>
-    <modalWindowUI  v-model:isModalActive="modalActive"></modalWindowUI>
+    <modalWindowUI v-if="modalRegActive" v-model:isModalActive="modalRegActive">
+      <form>
+      <input v-model="emailForm" placeholder="Email" type="email">
+      <input v-model="passForm" placeholder="password" type="password">
+
+      <a @click="registration">Зарегаться</a>
+      </form>
+    </modalWindowUI>
+
+        <modalWindowUI v-if="modalLogActive" v-model:isModalActive="modalLogActive">
+      <form>
+      <input v-model="emailFormLog" placeholder="Email" type="email">
+      <input v-model="passFormLog" placeholder="password" type="password">
+
+      <a @click="login">Войти</a>
+      </form>
+    </modalWindowUI>
+
     <main class="pt-20 bg-zinc-700 h-screen w-screen p-7">
         <router-view></router-view>
     </main>
@@ -16,8 +33,37 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRequest } from '@/hooks/useRequest';
 
-const modalActive = ref(true)
+const emailForm = ref('')
+const passForm = ref('')
+const emailFormLog = ref('')
+const passFormLog = ref('')
+const modalRegActive = ref(false)
+const modalLogActive = ref(false)
+
+const { requestPost } = useRequest()
+
+const registration = () => {
+    requestPost('http://localhost:8000/users/', {
+      email: emailForm.value,
+      password: passForm.value,
+      role: 'buyer'
+    })
+}
+
+const login = () => {
+  const token = ref(localStorage.getItem('auth_token'))
+  const reques = requestPost('http://localhost:8000/users/token', {
+      username: emailFormLog.value,
+      password: passFormLog.value,
+    })
+        token.value = reques.access_token
+      localStorage.setItem('auth_token', reques.access_token)
+
+      console.log(reques)
+}
+
 </script>
 
 <style>

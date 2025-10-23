@@ -1,5 +1,5 @@
 import { useApiClient } from "@/services/api";
-import { ref } from "vue";
+import { ref, reactive, toRaw } from "vue";
 
 export function useRequest() {
   const data = ref(null);
@@ -8,27 +8,39 @@ export function useRequest() {
 
   const requestGet = async (url, params = {}) => {
     loading.value = true;
+    let respData;
     try {
       const response = await api.get(url, params)
-      data.value = response.data;
+      respData = response.data;
+      data.value = respData;
     } catch (e) {
       console.log(e);
     } finally {
       console.log("Success fetched!");
       loading.value = false;
     }
+    return respData;
   };
 
   const requestPost = async (url, itemObj = {}) => {
     loading.value = true;
+        let respData;
     try {
-      const response = await api.post(url, itemObj);
+      const response = await api.post(url, itemObj,   {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+            respData = response.data;
+      data.value = respData;
     } catch (e) {
       console.log(e);
     } finally {
-      console.log("Success posted!");
+      console.log("reg posted!");
       loading.value = false;
     }
+
+    return respData;
   };
 
   return {
