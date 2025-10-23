@@ -1,11 +1,10 @@
 import jwt
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from rich.console import detect_legacy_windows
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi.security import OAuth2PasswordRequestForm
-from websockets.legacy.auth import Credentials
+
 
 from app.models.users import User as UserModel
 from app.schemas import UserCreate, User as UserSchema

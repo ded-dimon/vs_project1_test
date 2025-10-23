@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import update, select
 from sqlalchemy.sql import func
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.status import HTTP_404_NOT_FOUND
 
 from app.schemas import Review as ReviewSchema, ReviewCreate
 from app.db_depends import get_async_db
@@ -19,7 +18,7 @@ async def update_product_rating(db: AsyncSession, product_id: int):
     product = await db.get(ProductModel, product_id)
     if product is None:
         raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Product not found"
         )
 
