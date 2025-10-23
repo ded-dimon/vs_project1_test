@@ -1,14 +1,18 @@
 import './assets/main.css'
 
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-
 import App from './App.vue'
 import router from './router'
+import { createPinia } from 'pinia'
+import components from '@/components/UI'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
+components.forEach((component) => {
+    app.component(component.name, component)
+})
+
 app.use(router)
-
-app.mount('#app')
+    .use(pinia)
+    .mount('#app')
